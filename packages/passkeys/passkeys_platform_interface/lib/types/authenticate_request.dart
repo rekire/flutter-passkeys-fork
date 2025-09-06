@@ -10,6 +10,7 @@ class AuthenticateRequestType {
     required this.challenge,
     required this.mediation,
     required this.preferImmediatelyAvailableCredentials,
+    required this.origin,
     this.timeout,
     this.userVerification,
     this.allowCredentials,
@@ -50,4 +51,7 @@ class AuthenticateRequestType {
   /// If this value is `true`, the platform will prefer credentials that are
   /// immediately available, such as those that are stored on the device.
   final bool preferImmediatelyAvailableCredentials;
+
+  /// The origin (e.g. "https://example.com") for ClientDataJSON.
+  final String origin;
 }

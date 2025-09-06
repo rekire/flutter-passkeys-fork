@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:passkeys_windows/messages.g.dart';
 import 'package:passkeys_platform_interface/passkeys_platform_interface.dart';
 import 'package:passkeys_platform_interface/types/types.dart';
+import 'passkeys_authenticate_wrapper.dart';
 
 /// The Windows implementation of [PasskeysPlatform].
 class PasskeysWindows extends PasskeysPlatform {
@@ -19,28 +20,16 @@ class PasskeysWindows extends PasskeysPlatform {
   Future<AuthenticateResponseType> authenticate(
     AuthenticateRequestType request,
   ) async {
-    final r = await _api.authenticate(
-      request.relyingPartyId,
-      request.challenge,
-      request.timeout,
-      request.userVerification,
-      request.allowCredentials?.map((e) {
-        return AllowCredential(
-          id: e.id,
-          type: e.type,
-          transports: e.transports,
-        );
-      }).toList(),
-      request.preferImmediatelyAvailableCredentials,
-    );
-
+    final authenticator = PasskeysAuthenticator();
+    final resp = authenticator.authenticate(request);
     return AuthenticateResponseType(
-        id: r.id,
-        rawId: r.rawId,
-        clientDataJSON: r.clientDataJSON,
-        authenticatorData: r.authenticatorData,
-        signature: r.signature,
-        userHandle: r.userHandle);
+      id: resp.id,
+      rawId: resp.rawId,
+      clientDataJSON: resp.clientDataJSON,
+      authenticatorData: resp.authenticatorData,
+      signature: resp.signature,
+      userHandle: resp.userHandle,
+    );
   }
 
   @override
@@ -96,7 +85,6 @@ class PasskeysWindows extends PasskeysPlatform {
     );
   }
 
-  //
   @override
   Future<void> cancelCurrentAuthenticatorOperation() async {
     return;
